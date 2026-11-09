@@ -57,7 +57,9 @@ function recommendedRaw(d){const rows=pRows(d);if(rows.length<COMPACT_MIN)return
  const hs=d.hazards||'',fire=/H(?:22[0-9]|24[0-2])/i.test(hs),cmr=/H(?:34[01]|35[01]|36[012]|37[012])/i.test(hs),gas=/H28[01]/.test(hs),corrosive=/H(?:314|318)/.test(hs);
  const score=r=>{let n=0;const c=r.code;if(/^P210(?:\+|$)/.test(c))n+=fire?110:55;if(/^P280(?:\+|$)/.test(c))n+=100;if(/^P20[12](?:\+|$)/.test(c))n+=cmr?85:20;if(/^P26[01](?:\+|$)/.test(c))n+=70;if(/^P308\+P313/.test(c))n+=cmr?110:55;if(/^P305\+P351\+P338/.test(c))n+=corrosive?125:65;if(/^P304\+P340/.test(c))n+=85;if(/^P301\+P310/.test(c))n+=95;if(/^P370/.test(c))n+=fire?75:25;if(/^P410\+P403/.test(c))n+=gas?120:55;if(/^P403\+P235/.test(c))n+=fire?105:65;if(/^P403\+P233/.test(c))n+=80;if(/^P405/.test(c))n+=cmr?70:30;if(/^P501/.test(c))n+=100;return n};
  const selected=[];for(const cat of [2,3,4,5]){const list=cand.filter(r=>r.cat===cat).sort((a,b)=>score(b)-score(a)||a.i-b.i);if(list.length)selected.push(list[0].i)}
- const ranked=[...cand].sort((a,b)=>score(b)-score(a)||a.i-b.i);for(const r of [...ranked.filter(r=>r.cat===2||r.cat===3),...ranked]){if(selected.length>=6)break;if(!selected.includes(r.i))selected.push(r.i)}return selected.sort((a,b)=>a-b)
+ const ranked=[...cand].sort((a,b)=>score(b)-score(a)||a.i-b.i),n=c=>selected.filter(i=>rows[i].cat===c).length;
+ // 범주별 최대 2개로 먼저 채우고, 6개에 못 미칠 때만 제한 없이 채움
+ for(const cap of [2,9])for(const r of [...ranked.filter(r=>r.cat===2||r.cat===3),...ranked]){if(selected.length>=6)break;if(!selected.includes(r.i)&&n(r.cat)<cap)selected.push(r.i)}return selected.sort((a,b)=>a-b)
 }
 function compactActive(d){return d.pMode!=='all'&&pRows(d).length>=COMPACT_MIN&&recommendedP(d)!==null}
 function selectedP(d){const rows=pRows(d);if(!compactActive(d))return rows;const ids=Array.isArray(d.pSelection)?d.pSelection:recommendedP(d);return rows.filter(r=>ids.includes(r.i))}
