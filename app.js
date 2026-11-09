@@ -74,7 +74,7 @@ let renderQueued=0,lastHTML=null,lastInfo='',lastChecks='';
 function render(){if(!renderQueued)renderQueued=requestAnimationFrame(renderNow)}
 function renderNow(){if(renderQueued){cancelAnimationFrame(renderQueued);renderQueued=0}const d=active(),el=$('label'),size=dimensions(),type=effectiveType(d),pm=pictoSide(d,size);
  const html=M.labelHTML(d,type==='semi'?'':qr(),{type,pictoMM:pm});if(html!==lastHTML||!el.firstChild){el.innerHTML=html;lastHTML=html}
- el.style.width=size.w+'mm';el.style.height=size.h+'mm';el.style.fontSize=size.f+'pt';const pxW=size.w*96/25.4,pxH=size.h*96/25.4,width=Math.max(100,document.querySelector('.mat').getBoundingClientRect().width-24),scale=Math.min(1.6,width/pxW);el.style.transform=`scale(${scale})`;$('scaled').style.width=pxW*scale+'px';$('scaled').style.height=pxH*scale+'px';
+ el.style.width=size.w+'mm';el.style.height=size.h+'mm';el.style.fontSize=size.f+'pt';const pxW=size.w*96/25.4,pxH=size.h*96/25.4,width=Math.max(100,document.querySelector('.mat').getBoundingClientRect().width-24),scale=Math.min(1.6,width/pxW,matchMedia('(min-width:1151px)').matches?innerHeight*.6/pxH:9);el.style.transform=`scale(${scale})`;$('scaled').style.width=pxW*scale+'px';$('scaled').style.height=pxH*scale+'px';
  document.querySelectorAll('.pic-btn').forEach((b,i)=>{b.classList.toggle('selected',d.pictos.includes(i+1));b.setAttribute('aria-pressed',String(d.pictos.includes(i+1)))});
  // 측정(표지 원래 크기 기준)
  const overflow=el.scrollHeight>el.clientHeight+1||el.scrollWidth>el.clientWidth+1,lr=el.getBoundingClientRect(),toMM=px=>px/scale*25.4/96;
@@ -201,4 +201,7 @@ function paintBasis(){const D=MSDSStdData;$('basis').innerHTML='<p class="hint">
 try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved?.docs?.length)docs=saved.docs.map(M.normalize);if(saved?.base)$('baseUrl').value=saved.base;if(saved?.settings)Object.assign(settings,{layoutMode:['a4p','a4l','label'].includes(saved.settings.layoutMode)?saved.settings.layoutMode:'a4p',margin:Number(saved.settings.margin)>=0?Number(saved.settings.margin):10,gap:Number(saved.settings.gap)>=0?Number(saved.settings.gap):4,pictoBasis:saved.settings.pictoBasis==='diamond'?'diamond':'square'})}catch(e){}
 $('layoutMode').value=settings.layoutMode;$('margin').value=settings.margin;$('gap').value=settings.gap;$('pictoBasis').value=settings.pictoBasis;
 if(!docs.length)docs=[M.blank()];if(!$('baseUrl').value&&location.hostname.endsWith('github.io'))$('baseUrl').value=new URL('./',location.href).href;paintBasis();load(docs[0].id);
+// 왼쪽 메뉴: 01 표지 만들기 / 02 다국어·QR 등록 (같은 페이지에서 화면만 전환)
+function showView(){const i18n=location.hash==='#i18n';document.querySelector('.workspace').hidden=i18n;document.querySelector('.steps').hidden=i18n;document.querySelector('.basis').hidden=i18n;$('i18nView').hidden=!i18n;document.querySelectorAll('.rail .nav[data-view]').forEach(n=>n.classList.toggle('active',(n.dataset.view==='i18n')===i18n));if(i18n){$('i18nProduct').textContent=active().name||'이름 없는 제품';readTranslation()}else render()}
+window.addEventListener('hashchange',showView);showView();
 if(window.requestIdleCallback)requestIdleCallback(()=>imageTemplates().catch(()=>{}));
