@@ -73,7 +73,7 @@ function noCode(s){return s.replace(/^[HP]\d{3}(?:\+[HP]?\d{3})*\s*[:：]?\s*/,'
 function labelHTML(d,qr,opt){opt=opt||{};const type=opt.type||'standard',pm=opt.pictoMM,show=s=>esc(d.showCodes===true?s:noCode(s));
  const imgs=(d.pictos||[]).map(n=>`<img src="assets/GHS${String(n).padStart(2,'0')}.svg" alt="${esc(PICTOS[n-1])}"${pm?` style="width:${pm}mm;height:${pm}mm"`:''}>`).join(''),sig=esc(d.signal==='없음'?'':d.signal);
  let h=`<table class="lt"><tbody><tr><td colspan="2" class="lt-name"><div class="name-flex"><div class="name-text">${esc(d.name||'제품명을 입력하세요')}</div>${qr?`<div class="qrblock"><img src="${qr}" alt="다국어 QR"><small>다국어 표지<br>Languages</small></div>`:''}</div></td></tr>`;
- if(imgs||sig)h+=`<tr><td colspan="2" class="lt-pic"><div class="pictorow">${imgs?`<div class="symbols">${imgs}</div>`:''}${sig?`<div class="signal">${sig}</div>`:''}</div></td></tr>`;
+ if(imgs||sig)h+=`<tr><td colspan="2" class="lt-pic"><div class="pictorow">${imgs?`<div class="symbols"${pm?` style="max-width:min(${(4*pm+4.6).toFixed(1)}mm,100%)"`:''}>${imgs}</div>`:''}${sig?`<div class="signal">${sig}</div>`:''}</div></td></tr>`;
  if(type==='standard'){const ps=selectedP(d),omitted=pRows(d).length>ps.length;
   h+=`<tr><th>${esc(d.headH||'유해·위험 문구')}</th><td><ul>${lines(d.hazards).map(x=>`<li>${show(x)}</li>`).join('')}</ul></td></tr>`;
   const groups=[2,3,4,5,1,0].map(c=>{const list=ps.filter(r=>r.cat===c);return list.length?`<div class="p-group"><b>${esc(PCATS[c]||'기타')}</b><ul>${list.map(r=>`<li>${show(r.text)}</li>`).join('')}</ul></div>`:''}).join('');

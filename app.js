@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id),M=MSDS,STD=MSDSStd,KEY='field-msds-studi
 const sourceDocs=new Map(),sourceFiles=new Map();let visionTemplates;
 let docs=[],current='',saveTimer,qrURL='',qrImage='',busy=false,toastTimer,lastEval=[],lastPlan=null;
 const fields=['name','signal','hazards','precautions','supplier','phone','address'];
-const settings={layoutMode:'a4p',margin:10,gap:4,pictoBasis:'square'};
+const settings={layoutMode:'a4p',margin:5,gap:4,pictoBasis:'square'};
 function toast(s){$('toast').textContent=s;$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,6500)}
 function active(){return docs.find(x=>x.id===current)}
 function save(){try{localStorage.setItem(KEY,JSON.stringify({docs,base:$('baseUrl').value,settings}))}catch(e){toast('브라우저 저장 공간이 부족합니다. 작업 백업을 다운로드하세요.')}}
@@ -86,7 +86,7 @@ function renderNow(){if(renderQueued){cancelAnimationFrame(renderQueued);renderQ
  lastEval=STD.evaluate(d,{w:size.w,h:size.h,f:size.f,pictoSides,overflow,qrOverlap},{M,approved:$('approved').checked});
  if(wantQr()&&!qr())lastEval.push({key:'qr',title:'다국어 QR',status:'확인 필요',value:'게시 사이트 주소가 올바르지 않아 QR을 넣지 않았습니다.',basis:'-',kind:'auto'});
  paintChecks();
- $('fitInfo').textContent='실제 크기 '+size.w+'×'+size.h+'mm · '+(size.w*size.h/100)+'㎠ · 본문 '+size.f+'pt · 그림문자 '+(pictoSides[0]||pm)+'mm'+(d.pictoMM?'':' (자동)')+' · 화면 '+Math.round(scale*100)+'%';
+ $('fitInfo').textContent='실제 크기 '+size.w+'×'+size.h+'mm · '+(size.w*size.h/100)+'㎠ · 본문 '+size.f+'pt · 그림문자 '+(pictoSides[0]||pm)+'mm'+(d.pictoMM?'':' (자동)')+' · 화면 '+Math.round(scale*100)+'%'+(()=>{const w4=width4(d,size);return w4?' · 그림문자 '+Math.min(4,d.pictos.length)+'개를 한 줄에 두려면 가로 '+w4+'mm 이상':''})();
  const info=autoInfoHTML(d);if(info!==lastInfo){$('autoInfo').innerHTML=info;lastInfo=info}
  $('hCompare').textContent=hCompareText(d);
  for(const f of ['name','signal','hazards','precautions','supplier','phone'])document.querySelector('[data-f="'+f+'"]')?.classList.toggle('need',!String(d[f]||'').trim());
@@ -124,7 +124,7 @@ async function makePdf(draft=false){const c=await raster();if(draft)watermark(c)
  download(pdf.output('blob'),safeName()+(draft?'_검토전초안':'')+'.pdf')}
 $('pdf').onclick=()=>exporting(()=>makePdf(false),{label:'PDF'});
 $('draftPdf').onclick=()=>exporting(()=>makePdf(true),{draft:true,label:'초안 PDF'});
-$('print').onclick=()=>{if(!validate())return;document.getElementById('printHost')?.remove();const size=dimensions(),plan=layoutPlan(size);if(!plan.ok||plan.mode!=='a4p'){toast('브라우저 인쇄는 A4 세로 배치만 지원합니다. PDF 저장 후 인쇄하세요.');return}const host=document.createElement('div');host.id='printHost';host.hidden=true;let page;for(let i=0;i<copies();i++){if(i%plan.per===0){page=document.createElement('div');page.className='print-page';page.style.gap=plan.g+'mm';host.append(page)}const el=$('label').cloneNode(true);el.removeAttribute('id');el.style.transform='none';page.append(el)}document.body.append(host);Promise.all([...host.querySelectorAll('img')].map(i=>i.decode())).then(()=>window.print()).catch(()=>toast('그림문자를 불러오지 못했습니다.'))};
+$('print').onclick=()=>{if(!validate())return;document.getElementById('printHost')?.remove();const size=dimensions(),plan=layoutPlan(size);if(!plan.ok||plan.mode!=='a4p'){toast('브라우저 인쇄는 A4 세로 배치만 지원합니다. PDF 저장 후 인쇄하세요.');return}const host=document.createElement('div');host.id='printHost';host.hidden=true;let page;for(let i=0;i<copies();i++){if(i%plan.per===0){page=document.createElement('div');page.className='print-page';page.style.gap=plan.g+'mm';host.append(page)}const el=$('label').cloneNode(true);el.removeAttribute('id');el.style.transform='none';page.append(el)}document.getElementById('printPage')?.remove();const st=document.createElement('style');st.id='printPage';st.textContent='body{background:#fff!important}@page{size:A4;margin:'+settings.margin+'mm}#printHost .print-page{width:'+(210-2*settings.margin)+'mm;min-height:'+(297-2*settings.margin)+'mm}';document.head.append(st);document.body.append(host);Promise.all([...host.querySelectorAll('img')].map(i=>i.decode())).then(()=>window.print()).catch(()=>toast('그림문자를 불러오지 못했습니다.'))};
 $('excel').onclick=()=>exporting(async()=>{const d=active(),wb=new ExcelJS.Workbook(),ws=wb.addWorksheet('경고표지');ws.columns=[{width:22},{width:90}];const shown=M.selectedP(d).map(r=>r.text).join('\n'),size=dimensions();const data=[['제품명',d.name],['신호어',d.signal],['그림문자',d.pictos.map(n=>'GHS'+String(n).padStart(2,'0')+' '+M.PICTOS[n-1]).join('\n')],['유해·위험 문구',d.hazards],['예방조치 문구(표지 표시)',shown],['예방조치 문구(원문 전체)',d.precautions],['공급자명',d.supplier],['주소',d.address],['전화번호',d.phone],['용기 용량',(d.capValue||'')+' '+(d.capValue?d.capUnit:'')],['표지 크기',size.w+'×'+size.h+'mm']];data.forEach(r=>{const row=ws.addRow(r);row.alignment={vertical:'top',wrapText:true};row.height=Math.max(28,(M.lines(r[1]).length+Math.ceil(String(r[1]).length/60))*16);row.getCell(1).fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFEAF0FA'}};row.getCell(1).font={bold:true};row.eachCell(c=>c.border={bottom:{style:'thin',color:{argb:'FFDCE3ED'}}})});ws.addRow(['안내','편집용 데이터입니다. 인쇄 표지와 동일한 레이아웃이 아닙니다.']);download(new Blob([await wb.xlsx.writeBuffer()],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}),safeName()+'.xlsx')},{label:'엑셀'});
 
 /* ---------- PDF 분석 (텍스트 우선 → 그림문자 Worker) ---------- */
@@ -140,8 +140,16 @@ function workerVision(img,tmpl){if(visionWorker===false||typeof Worker==='undefi
 async function identifyAsync(canvas){const tmpl=await imageTemplates(),img=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height),p=workerVision(img,tmpl);if(p){try{return await p}catch(e){}}await new Promise(r=>setTimeout(r,0));return MSDSVision.identify(canvas,tmpl)}
 function layoutOverflow(){const el=$('label');return el.scrollHeight>el.clientHeight+1||el.scrollWidth>el.clientWidth+1}
 // 글자를 줄이지 않고 표지를 키운다(세로 → 가로). 최대 400×400mm.
-function autoFit(silent){renderNow();const el=$('label'),f=dimensions().f;let {w,h}=dimensions();const start=w+'×'+h;for(let k=0;k<200&&layoutOverflow();k++){if(h<400)h=Math.min(400,h+5);else if(w<400)w=Math.min(400,w+5);else break;el.style.width=w+'mm';el.style.height=h+'mm'}$('width').value=w;$('height').value=h;sizeChanged();renderNow();
+function autoFit(silent){renderNow();const el=$('label'),f=dimensions().f;let {w,h}=dimensions();const start=w+'×'+h;for(let k=0;k<200&&layoutOverflow();k++){if(h<400)h=Math.min(400,h+5);else if(w<400)w=Math.min(400,w+5);else break;$('width').value=w;$('height').value=h;renderNow()}if(start!==w+'×'+h&&h<400)h=Math.min(400,h+5); // 브라우저 인쇄 줄바꿈 차이 대비 여유
+ $('width').value=w;$('height').value=h;sizeChanged();renderNow();
  if(layoutOverflow())toast('400×400mm에서도 넘칩니다. 표시 문구·글자 크기(현재 '+f+'pt)를 검토하세요.');else if(!silent)toast(start===w+'×'+h?'현재 크기에 내용이 모두 들어갑니다.':'표지를 '+w+'×'+h+'mm로 키웠습니다(글자 크기 유지).')}
+// 용지 폭에 맞추기: 표지 가로를 용지 인쇄 폭(용지-여백×2)으로, 세로는 내용과 법정 최소 면적에 맞춤(축소 아님)
+function fitPaper(){const m=settings.margin,pw=settings.layoutMode==='a4l'?297:210,ph=settings.layoutMode==='a4l'?210:297,w=pw-2*m;$('width').value=w;$('height').value=20;sizeChanged();autoFit(true);
+ const d=active(),sr=STD.sizeRule(STD.parseCapacity(d.capValue,d.capUnit),d.sideArea);let h=dimensions().h;if(sr.min)h=Math.max(h,Math.ceil(sr.min*100/w/5)*5);$('height').value=h;sizeChanged();renderNow();
+ toast(h<=ph-2*m?'표지를 용지 폭('+w+'mm)에 맞췄습니다: '+w+'×'+h+'mm':'용지 폭에 맞췄지만 세로 '+h+'mm가 용지보다 깁니다. ‘표지 크기 용지’로 저장하세요.')}
+$('fitPaper').onclick=fitPaper;
+// 그림문자 4개를 한 줄에 놓는 데 필요한 표지 가로(법정 최소 크기 유지)
+function width4(d,size){const n=Math.min(4,d.pictos.length);if(n<2||d.pictoMM)return 0;for(let w=size.w;w<=400;w+=5){const s=pictoSide(d,{...size,w});if(n*s+(n-1)*1.5<=w-10)return w===size.w?0:w}return 400}
 $('autoFit').onclick=()=>autoFit(false);
 async function pdfText(file){
  if(!globalThis.pdfjsLib)throw Error('PDF 라이브러리 파일을 확인하세요.');pdfjsLib.GlobalWorkerOptions.workerSrc='vendor/pdf.worker.min.js';

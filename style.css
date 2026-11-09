@@ -71,7 +71,7 @@ label.check.need::after{position:static;margin-left:6px}
 .label .lt-name{font-size:1.75em;font-weight:900;text-align:center!important;line-height:1.25;padding:2mm!important}
 .label .lt-pic{padding:2mm!important}
 .label .pictorow{display:flex;align-items:center;justify-content:center;gap:4mm;flex-wrap:wrap}
-.label .symbols{display:flex;gap:1.5mm;flex-wrap:wrap;justify-content:center;flex:0 1 auto}
+.label .symbols{display:flex;gap:1.5mm;flex-wrap:wrap;justify-content:center;flex:none} /* 한 줄 최대 4개(폭은 core.js에서 지정), 신호어는 자리가 없으면 다음 줄 */
 .label .symbols img{width:21mm;height:21mm;object-fit:contain;display:block}
 .label .signal{font-size:2.1em;font-weight:900;letter-spacing:.08em;white-space:nowrap}
 .label ul{padding-left:1.1em;margin:0}.label li{margin:0 0 .5mm}
