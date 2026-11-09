@@ -65,9 +65,9 @@ label.check.need::after{position:static;margin-left:6px}
 .basis-row a{color:var(--blue)}.basis h4{font-size:13px;margin:16px 0 4px}.basis-list{font-size:12px;margin:0;padding-left:18px;line-height:1.8}
 /* 표 양식 경고표지 (인쇄물에는 편집 화면 설명·점검 패널이 들어가지 않음) */
 .label{padding:2.2mm;gap:0;display:block;line-height:1.4}
-.label .lt{width:100%;border-collapse:collapse;border:.45mm solid #000;table-layout:fixed}
+.label .lt{width:100%;border-collapse:collapse;border:.45mm solid #000;table-layout:auto}
 .label .lt th,.label .lt td{border:.3mm solid #000;padding:1.4mm 2mm;vertical-align:top;text-align:left}
-.label .lt th{width:19%;font-size:.95em;font-weight:800;text-align:center;vertical-align:middle;word-break:keep-all}
+.label .lt th{width:1%;overflow-wrap:normal;word-break:keep-all;white-space:normal;font-size:.95em;font-weight:800;text-align:center;vertical-align:middle;word-break:keep-all}
 .label .lt-name{font-size:1.75em;font-weight:900;text-align:center!important;line-height:1.25;padding:2mm!important}
 .label .lt-pic{padding:2mm!important}
 .label .pictorow{display:flex;align-items:center;justify-content:center;gap:4mm;flex-wrap:wrap}
@@ -82,7 +82,7 @@ label.check.need::after{position:static;margin-left:6px}
 .label .qrblock{display:flex;flex-direction:column;align-items:center;gap:.6mm;margin:0;flex:none}
 .label .qrblock img{width:20mm;height:20mm}.label .qrblock small{font-size:.7em;text-align:center;line-height:1.2}
 .label .lt-ref{text-align:center!important;font-weight:800;font-size:.95em}
-.viewer .label .lt th{width:24%}
+
 @media(max-width:1150px){.workspace{grid-template-columns:minmax(0,1fr)}.preview-col{grid-row:auto}}
 @media(max-width:650px){.type-grid,.grid.three,.grid.four,.grid.controls{grid-template-columns:1fr 1fr}.p-row{grid-template-columns:18px 40px 1fr 22px}.p-row .p-text{grid-column:2/4}.p-row .p-flag{grid-column:2/4;padding-top:0}.basis-row{grid-template-columns:1fr}}
 
