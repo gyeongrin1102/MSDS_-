@@ -101,3 +101,5 @@ footer.legal .oss{font-size:11px;margin-top:6px}
 
 /* 표지 상단 다국어 QR */
 .label .name-flex{display:flex;align-items:center;gap:3mm}.label .name-text{flex:1;min-width:0;text-align:center}.label .lt-name .qrblock img{width:17mm;height:17mm}.label .lt-name .qrblock small{font-size:.38em;font-weight:400}
+
+.gh-box{margin-top:22px;border-top:1px solid var(--line);padding-top:16px}.gh-box .primary{margin-top:12px}

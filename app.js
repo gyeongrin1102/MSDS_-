@@ -191,7 +191,30 @@ $('sample').onclick=()=>{const d=M.blank();Object.assign(d,{name:'산소 (연습
 $('parse').onclick=()=>{if(!confirm('현재 제품의 추출 필드를 원문 분석 결과로 바꿀까요?'))return;const d=M.parse($('raw').value),old=active();Object.assign(old,d,{id:old.id,translations:old.translations,source:old.source});delete old.pSelection;old.pictosManual=false;load(old.id);save()};
 $('backup').onclick=()=>download(new Blob([JSON.stringify({version:1,products:docs},null,2)],{type:'application/json'}),'msds-work-backup.json');
 $('restore').onchange=async e=>{try{const f=e.target.files[0];if(!f)return;if(f.size>20e6)throw Error('파일이 너무 큽니다.');const json=JSON.parse(await f.text());if(!Array.isArray(json.products)||json.products.length>300)throw Error('제품 데이터 형식이 아닙니다.');if(!confirm('백업 제품을 현재 목록에 병합할까요? 같은 ID는 백업 내용으로 바뀝니다.'))return;for(const p of json.products){const d=M.normalize(p),i=docs.findIndex(x=>x.id===d.id);if(i<0)docs.push(d);else docs[i]=d}load(docs[0].id);save();toast('복원 완료')}catch(e){toast('복원 실패: '+e.message)}finally{e.target.value=''}};
-$('publish').onclick=()=>{try{getBase();const products=docs.filter(d=>d.name.trim()).map(d=>{const p={...d};delete p.raw;delete p.source;delete p.analysisInfo;delete p.extracted;return p});if(!products.length)throw Error('제품을 먼저 등록하세요.');download(new Blob([JSON.stringify({version:1,updatedAt:new Date().toISOString(),products},null,2)],{type:'application/json'}),'products.json');toast('products.json을 GitHub의 index.html과 같은 위치에 올리세요.');save()}catch(e){toast(e.message)}};
+// 게시용 제품 목록: 원문 추출 텍스트·출처 등은 빼고 공개
+function publicProducts(){const products=docs.filter(d=>d.name.trim()).map(d=>{const p={...d};delete p.raw;delete p.source;delete p.analysisInfo;delete p.extracted;return p});if(!products.length)throw Error('제품을 먼저 등록하세요.');return products}
+/* GitHub 직접 저장: 저장소의 products.json을 GitHub API로 갱신(같은 ID는 덮어쓰고 다른 제품은 유지). 토큰은 api.github.com에만 보냄 */
+const GH_KEY='field-msds-gh-token';
+function ghRepo(){const r=$('ghRepo').value.trim();if(!/^[\w.-]+\/[\w.-]+$/.test(r))throw Error('저장소를 “아이디/저장소이름” 형식으로 입력하세요.');return r}
+const b64enc=str=>{const b=new TextEncoder().encode(str);let s='';for(let i=0;i<b.length;i+=8192)s+=String.fromCharCode(...b.subarray(i,i+8192));return btoa(s)};
+const b64dec=b=>new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g,'')),c=>c.charCodeAt(0)));
+function mergeProducts(remote,local){const byId=new Map((Array.isArray(remote)?remote:[]).filter(p=>p&&typeof p.id==='string').map(p=>[p.id,p]));for(const p of local)byId.set(p.id,p);return [...byId.values()]}
+async function ghSave(){const st=$('ghStatus'),token=$('ghToken').value.trim();try{getBase();const repo=ghRepo();if(!token)throw Error('GitHub 토큰을 입력하세요.');const local=publicProducts();
+ if($('ghRemember').checked)try{localStorage.setItem(GH_KEY,token)}catch(e){}else try{localStorage.removeItem(GH_KEY)}catch(e){}
+ const api='https://api.github.com/repos/'+repo+'/contents/products.json',h={Authorization:'Bearer '+token,Accept:'application/vnd.github+json'};
+ for(let attempt=0;attempt<2;attempt++){st.textContent='GitHub에 저장 중…';
+  const g=await fetch(api+'?t='+Date.now(),{headers:h,cache:'no-store'});if(g.status===401)throw Error('토큰이 올바르지 않거나 만료되었습니다.');if(g.status===403)throw Error('토큰에 이 저장소의 쓰기(Contents) 권한이 없습니다.');if(!g.ok&&g.status!==404)throw Error('저장소를 읽지 못했습니다('+g.status+').');
+  let sha,remote=[];if(g.ok){const j=await g.json();sha=j.sha;try{remote=JSON.parse(b64dec(j.content||'')).products}catch(e){remote=[]}}
+  const products=mergeProducts(remote,local),body={message:'경고표지 다국어 데이터 갱신 ('+local.length+'개 제품)',content:b64enc(JSON.stringify({version:1,updatedAt:new Date().toISOString(),products},null,2))};if(sha)body.sha=sha;
+  const r=await fetch(api,{method:'PUT',headers:{...h,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(r.status===409||r.status===422&&sha&&attempt===0)continue; // 그 사이 다른 저장이 있었으면 다시 읽고 한 번 재시도
+  if(r.status===404)throw Error('저장소를 찾을 수 없거나 토큰 권한이 없습니다.');if(r.status===401||r.status===403)throw Error('토큰 권한(Contents 쓰기)을 확인하세요.');if(!r.ok)throw Error('저장 실패('+r.status+').');
+  st.textContent='저장 완료 · 제품 '+products.length+'개 게시 · 약 1~2분 뒤 QR에서 번역이 보입니다.';toast('GitHub에 저장했습니다. 잠시 후 QR로 확인하세요.');return}
+ throw Error('다른 곳에서 동시에 저장되어 실패했습니다. 다시 누르세요.')}catch(e){st.textContent='저장 실패: '+e.message;toast('GitHub 저장 실패: '+e.message)}}
+$('ghSave').onclick=()=>ghSave();
+try{const t=localStorage.getItem(GH_KEY);if(t){$('ghToken').value=t;$('ghRemember').checked=true}}catch(e){}
+if(!$('ghRepo').value&&location.hostname.endsWith('.github.io'))$('ghRepo').value=location.hostname.split('.')[0]+'/'+(location.pathname.split('/')[1]||'');
+$('publish').onclick=()=>{try{getBase();const products=publicProducts();download(new Blob([JSON.stringify({version:1,updatedAt:new Date().toISOString(),products},null,2)],{type:'application/json'}),'products.json');toast('products.json을 GitHub의 index.html과 같은 위치에 올리세요.');save()}catch(e){toast(e.message)}};
 fields.forEach(k=>$(k).oninput=edit);$('noPictos').onchange=edit;$('raw').oninput=()=>{active().raw=$('raw').value;debouncedSave()};$('lang').onchange=readTranslation;['trName','trSignal','trHazards','trPrecautions','trReviewed'].forEach(k=>$(k).oninput=trEdit);
 for(let n=1;n<=9;n++){const b=document.createElement('button');b.type='button';b.className='pic-btn';b.setAttribute('aria-label',M.PICTOS[n-1]);b.innerHTML=`<img src="assets/GHS${String(n).padStart(2,'0')}.svg" alt="">${STD.PNAME[n-1]}`;b.onclick=()=>{const d=active();d.pictosManual=true;d.pictos=d.pictos.includes(n)?d.pictos.filter(x=>x!==n):[...d.pictos,n].sort((a,b)=>a-b);if(d.pictos.length){d.noPictos=false;$('noPictos').checked=false}unapprove();render();debouncedSave()};$('pictos').append(b)}
 for(const id of ['width','height','fontSize'])$(id).oninput=sizeChanged;for(const id of ['includeQr','baseUrl'])$(id).oninput=()=>{unapprove();render();debouncedSave()};window.addEventListener('resize',render);
