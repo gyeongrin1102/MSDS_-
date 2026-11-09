@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-09T05:24:03.716Z",
+  "updatedAt": "2026-11-09T06:19:27.400Z",
   "products": [
     {
       "id": "p-b25147b9-466f-486a-8b4e-ab71c584b281",
@@ -45,11 +45,11 @@
       "capacity": "",
       "translations": {
         "vi": {
-          "reviewed": true,
           "name": "동성 Lacquer Spray (적색)",
-          "signal": "nguy hiêm",
-          "hazards": "- khí dễ cháy\n- Chất lỏng và hơi nước nóng\n- Nó có thể gây hại nếu nuốt vào và chảy vào cầu nguyện.\n- Có hại khi tiếp xúc với da\n- Gây kích ứng da\n- Gây kích ứng mạnh cho mắt\n- hít vào có hại\n- Nghi ngờ có thế gây ung thư\n- Nghi ngờ có thể gây tổn hại đến khả n ăng sinh sản hoặc thai nhi\n- Có thể gây tốn thương đến các cơ quan trong c ơ thể (xem khoản 11 MSDS).",
-          "precautions": "sự đề phòng - Tránh xa nhiệt độ, tia lửa, nhi ệt độ cao - Cấm hút thuốc\n                 - Hãy đeo găng tay bảo hộ, quần á o bảo hộ, kính bảo hộ, đồ bảo hộ khuôn mặt.\nsự đỗ i phó - Nếu nuốt phải, hãy đên cơ quan y tế (bác sĩ) khám ngay.\n                - Nếu bị phơi bày hoặc lo ngại phơi bày, hãy tìm kiềm các biện pháp và lời khuyên y học.\ntích trữ       - Hãy bảo quản ở nơi thoá ng khí tốt và duy trì ở nhiệt độ thâp.\nsự hu ỷ bỏ - Tham khảoồ 13. Nội dung chú ý khi h ủy bỏ\" của MSDS và hủy bỏ nội dung và hộp đựng."
+          "signal": "NGUY HIỂM",
+          "hazards": "Thông tin về mối nguy\nKhí cực kỳ dễ cháy.\nChất lỏng và hơi rất dễ cháy.\nCó thể gây hại nếu nuốt phải và đi vào đường hô hấp.\nCó hại khi tiếp xúc với da.\nGây kích ứng da.\nGây kích ứng mắt nghiêm trọng.\nCó hại nếu hít phải.\nNghi ngờ gây ung thư.\nNghi ngờ gây tổn hại đến khả năng sinh sản hoặc thai nhi.\nCó thể gây tổn thương các cơ quan (xem Mục 11 của MSDS).",
+          "precautions": "Phòng ngừa\n- Tránh xa nguồn nhiệt, tia lửa, ngọn lửa trần và các bề mặt nóng. Cấm hút thuốc.\n- Đeo găng tay bảo hộ, mặc quần áo bảo hộ, đeo kính bảo hộ và thiết bị bảo vệ mặt.\nỨng phó\n- Nếu nuốt phải, phải đến cơ sở y tế hoặc gặp bác sĩ ngay lập tức.\n- Nếu đã phơi nhiễm hoặc nghi ngờ bị phơi nhiễm, hãy tìm kiếm sự tư vấn hoặc chăm sóc y tế.\nBảo quản\n- Bảo quản ở nơi thông thoáng và giữ ở nhiệt độ thấp.\nThải bỏ\n- Thải bỏ sản phẩm và bao bì theo hướng dẫn tại Mục 13 “Những lưu ý khi thải bỏ” trong MSDS.",
+          "reviewed": false
         },
         "ru": {
           "name": "",
