@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-09T03:29:08.697Z",
+  "updatedAt": "2026-11-09T05:20:52.484Z",
   "products": [
     {
       "id": "p-b25147b9-466f-486a-8b4e-ab71c584b281",
@@ -50,17 +50,25 @@
           "signal": "nguy hiêm",
           "hazards": "- khí dễ cháy\n- Chất lỏng và hơi nước nóng\n- Nó có thể gây hại nếu nuốt vào và chảy vào cầu nguyện.\n- Có hại khi tiếp xúc với da\n- Gây kích ứng da\n- Gây kích ứng mạnh cho mắt\n- hít vào có hại\n- Nghi ngờ có thế gây ung thư\n- Nghi ngờ có thể gây tổn hại đến khả n ăng sinh sản hoặc thai nhi\n- Có thể gây tốn thương đến các cơ quan trong c ơ thể (xem khoản 11 MSDS).",
           "precautions": "sự đề phòng - Tránh xa nhiệt độ, tia lửa, nhi ệt độ cao - Cấm hút thuốc\n                 - Hãy đeo găng tay bảo hộ, quần á o bảo hộ, kính bảo hộ, đồ bảo hộ khuôn mặt.\nsự đỗ i phó - Nếu nuốt phải, hãy đên cơ quan y tế (bác sĩ) khám ngay.\n                - Nếu bị phơi bày hoặc lo ngại phơi bày, hãy tìm kiềm các biện pháp và lời khuyên y học.\ntích trữ       - Hãy bảo quản ở nơi thoá ng khí tốt và duy trì ở nhiệt độ thâp.\nsự hu ỷ bỏ - Tham khảoồ 13. Nội dung chú ý khi h ủy bỏ\" của MSDS và hủy bỏ nội dung và hộp đựng."
+        },
+        "ru": {
+          "name": "",
+          "signal": "ОПАСНО",
+          "hazards": "Чрезвычайно легковоспламеняющийся газ.\nСодержит газ под давлением; при нагревании может взорваться.\nВредно при вдыхании.\nВредно при контакте с кожей.\nВызывает раздражение кожи.\nВызывает сильное раздражение глаз\nВредно при проглатывании.\nПредположительно вызывает рак.\nПредположительно оказывает отрицательное воздействие на репродуктивную функцию или на развитие плода.\nМожет вызывать повреждение органов (см. раздел 11 паспорта безопасности (MSDS)).",
+          "precautions": "Предупреждение\n- Беречь от тепла, искр, открытого огня и горячих поверхностей. Не курить.\n- Использовать защитные перчатки, защитную одежду, защитные очки и средства защиты лица.\nРеагирование\n- При проглатывании немедленно обратиться за медицинской помощью.\n- При воздействии или подозрении на воздействие обратиться за медицинской помощью.\nХранение\n- Хранить в хорошо вентилируемом прохладном месте.\nУтилизация\nУтилизировать содержимое и тару в соответствии с разделом 13 паспорта безопасности (MSDS).",
+          "reviewed": true
         }
       },
       "pMode": "compact",
       "showCodes": false,
-      "capUnit": "mL",
+      "capValue": "50",
+      "capUnit": "L",
       "labelType": "standard",
       "semiConfirmed": false,
       "pictosManual": false,
       "size": {
-        "w": 150,
-        "h": 280,
+        "w": 196,
+        "h": 205,
         "f": 11
       }
     }
