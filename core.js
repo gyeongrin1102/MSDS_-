@@ -15,11 +15,11 @@ function section(t,n){const rows=t.split('\n'),head=k=>new RegExp('^\\s*(?:(?:�
 function cleanPages(pages){if(pages.length<2)return pages.join('\n');const key=x=>x.replace(/\d+/g,'#').replace(/\s+/g,''),edge=p=>{const r=p.split('\n');return new Set([...r.slice(0,3),...r.slice(-3)].map(key))},count=new Map();for(const st of pages.map(edge))for(const k of st)count.set(k,(count.get(k)||0)+1);const rep=k=>k&&count.get(k)>=2&&!/^[HP]#/.test(k)&&!/^(?:제)?#[.．、항]/.test(k)&&!/^SECTION#/i.test(k);return pages.map((p,pi)=>{const r=p.split('\n');return r.filter((x,i)=>!(((i<3&&pi>0)||i>=r.length-3)&&rep(key(x)))).join('\n')}).join('\n')}
 // 원문 그림문자 줄의 한글 명칭 → GHS 번호 (원 위의 불꽃을 불꽃보다 먼저 검사)
 const PICTO_WORDS=[[3,/원\s*위의?\s*불꽃|산화성/],[1,/폭발성|폭탄/],[2,/불꽃|인화성/],[4,/가스\s*실린더|고압\s*가스/],[5,/부식성/],[6,/해골|급성\s*독성/],[7,/감탄\s*부호|느낌표/],[8,/건강\s*유해|건강유해/],[9,/환경|수생/]];
-const NOT_VALUE=/^(?:[가-마]\.|○|●|※|\*|그림|신호|유해|예방|\d+[.)]|해당\s*없음|자료\s*없음|없음$|N\/?A$|-+$|\(?\s*(?:입력|기재|작성))/i;
+const NOT_VALUE=/^(?:[가-마]\.|[a-hA-H][.)](?=\s*[가-힣])|○|●|※|\*|그림|신호|유해|예방|\d+[.)]|해당\s*없음|자료\s*없음|없음$|N\/?A$|-+$|\(?\s*(?:입력|기재|작성))/i;
 function parse(raw){
  const d=blank();d.raw=String(raw);const t=String(raw).replace(/\r/g,'').replace(/\f/g,'\n').replace(/[\t  ]+/g,' ').replace(/^\s*\d+\s*\/\s*\d+\s*$/gm,'').replace(/^\s*(?:page|페이지)?\s*\d+\s*(?:of|\/)\s*\d+\s*(?:page|페이지|쪽)?\s*$/gim,'').replace(/^\s*([가-힣])\s*\.\s*/gm,'$1. ');
- const first=section(t,1)||t,second=section(t,2);const get=(src,pattern)=>{const rows=src.split('\n');const re=new RegExp('^(?:[-•○●]\\s*)?(?:[가-마]\\.\\s*)?(?:'+pattern+')\\s*(?:[:：]\\s*)?(.*)$','i');for(let i=0;i<rows.length;i++){const m=rows[i].trim().match(re);if(!m)continue;let v=m[1].trim();if(!v){v=(rows.slice(i+1).find(x=>x.trim())||'').trim()}v=v.replace(/^[-•]\s*/,'').trim();if(NOT_VALUE.test(v)||v.length>150)return '';return v}return ''};
- d.name=get(first,'제품\\s*명|물질\\s*명|Product\\s*(?:name|identifier)');
+ const first=section(t,1)||t,second=section(t,2);const get=(src,pattern)=>{const rows=src.split('\n');const re=new RegExp('^(?:[-•○●]\\s*)?(?:(?:[가-마]|[a-hA-H])[.)]\\s*)?(?:'+pattern+')\\s*(?:[:：]\\s*)?(.*)$','i');for(let i=0;i<rows.length;i++){const m=rows[i].trim().match(re);if(!m)continue;let v=m[1].trim();if(!v){v=(rows.slice(i+1).find(x=>x.trim())||'').trim()}v=v.replace(/^[-•]\s*/,'').trim();if(NOT_VALUE.test(v)||v.length>150)return '';return v}return ''};
+ d.name=get(first,'제품\\s*명|물질\\s*명|상품\\s*명|제품의?\\s*명칭|제품\\s*식별자|화학\\s*제품\\s*명|Product\\s*(?:name|identifier)|Trade\\s*name');
  d.supplier=get(first,'회사\\s*명|공급자\\s*명|제조자\\s*명|제조\\s*업체\\s*명|Company\\s*name');
  d.address=get(first,'주\\s*소|Address');
  d.phone=get(first,'긴급\\s*(?:전화\\s*번호|연락처)|전화\\s*번호|Emergency\\s*(?:telephone|phone)(?:\\s*number)?').replace(/^(?:TEL|전화)\s*[:：]\s*/i,'').split(/[,;]?\s*FAX\s*[:：]/i)[0].replace(/[,;]\s*$/,'').trim();
@@ -29,13 +29,15 @@ function parse(raw){
  const tp=new Set([...second.matchAll(/GHS\s*0?([1-9])\b/gi)].map(x=>Number(x[1])));
  const srows=second.split('\n');for(let i=0;i<srows.length;i++){if(!/그림\s*문자|Pictogram/i.test(srows[i]))continue;for(let k=i;k<Math.min(srows.length,i+3);k++){let s=k===i?srows[k].replace(/^.*?(?:그림\s*문자|Pictogram)/i,''):srows[k];if(k>i&&/신호|유해|예방|^[가-마]\./.test(s))break;for(const [n,re] of PICTO_WORDS)if(re.test(s)){tp.add(n);s=s.replace(new RegExp(re.source,'g'),' ')}}break}
  d.pictos=[...tp].sort((a,b)=>a-b);
- const hs=[],ps=[];let dest=null;
+ const hs=[],ps=[];let dest=null,cont=0;
  for(let line of second.split('\n')){
   line=line.trim().replace(/^[-•]\s*/,'');if(!line||/^\d+\s*\/\s*\d+$/.test(line))continue;
-  if(/^(?:[가-마]\.\s*|[○●■□]|\d+[)]|MSDS|물질안전보건자료)/i.test(line)){dest=null;continue}
+  // 다음 항목(가./a.), 구분선(-----), 표(|) 줄에서 문구 이어붙이기를 멈춤
+  if(/^(?:[가-마]\.\s*|[a-hA-H][.)]\s*(?=[가-힣(])|[○●■□]|\d+[)]|MSDS|물질안전보건자료|[-=_~─━*]{3,})/i.test(line)||line.includes('|')){dest=null;continue}
   const matches=[...line.matchAll(/\b[HP]\s*\d{3}(?:\s*\+\s*[HP]?\s*\d{3})*/g)];
-  if(matches.length){for(let j=0;j<matches.length;j++){const m=matches[j];let part=line.slice(m.index,matches[j+1]?.index).trim().replace(/^([HP])\s+(\d)/,'$1$2').replace(/\s*\+\s*/g,'+').replace(/\s+([,.])/g,'$1');part=part.replace(/\+(\d)/g,'+'+part[0]+'$1');dest=part[0]==='H'?hs:ps;dest.push(part)}}
-  else if(dest&&!/^(?:분류|그림|신호|유해|예방|대응|저장|폐기|NFPA|보건\s*[:：])/.test(line)){dest[dest.length-1]+=' '+line}
+  if(matches.length){for(let j=0;j<matches.length;j++){const m=matches[j];let part=line.slice(m.index,matches[j+1]?.index).trim().replace(/^([HP])\s+(\d)/,'$1$2').replace(/\s*\+\s*/g,'+').replace(/\s+([,.])/g,'$1');part=part.replace(/\+(\d)/g,'+'+part[0]+'$1');dest=part[0]==='H'?hs:ps;dest.push(part);cont=0}}
+  else if(dest&&cont<3&&(!/^(?:분류|그림|신호|유해|예방|대응|저장|폐기|NFPA|보건\s*[:：])/.test(line)||/(?:시오|십시오|하라|함|음|임)\s*\.?$/.test(line))){dest[dest.length-1]+=' '+line;cont++} // 한 문구에 이어붙이는 줄은 최대 3줄
+  else dest=null
  }
  d.hazards=[...new Set(hs)].join('\n');d.precautions=[...new Set(ps)].join('\n');d.source='자동 추출 · 원문 대조 필요';
  d.extracted={hazards:lines(d.hazards),precautions:lines(d.precautions),pictosText:[...d.pictos],pictosImage:[],pictosUncertain:[],signal:d.signal,signalRaw:sig.slice(0,80),fields:{name:!!d.name,supplier:!!d.supplier,phone:!!d.phone,address:!!d.address,signal:!!d.signal}};
