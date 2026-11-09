@@ -21,9 +21,12 @@ function load(id){current=id;const d=active();fields.forEach(k=>$(k).value=d[k])
 // 입력할 때 목록 전체를 다시 만들지 않고, 표지는 프레임당 1회만 갱신한다.
 let pTableTimer;
 function edit(e){const d=active(),pChanged=d.precautions!==$('precautions').value,nameChanged=d.name!==$('name').value;if(pChanged)delete d.pSelection;fields.forEach(k=>d[k]=$(k).value);if(e?.target?.id==='noPictos')d.pictosManual=true;d.noPictos=$('noPictos').checked;unapprove();if(nameChanged){const b=$('queue').querySelector('.queue-row.active button');if(b)b.textContent=d.name||d.source||'이름 없는 제품'}if(pChanged){clearTimeout(pTableTimer);pTableTimer=setTimeout(paintPTable,250)}render();debouncedSave()}
-function trEdit(e){const t={};for(const [id,k] of [['trName','name'],['trSignal','signal'],['trHazards','hazards'],['trPrecautions','precautions']])t[k]=$(id).value;t.reviewed=e.target.id==='trReviewed'?$('trReviewed').checked:false;$('trReviewed').checked=t.reviewed;active().translations[$('lang').value]=t;debouncedSave()}
+function trEdit(e){const t={};for(const [id,k] of [['trName','name'],['trSignal','signal'],['trHazards','hazards'],['trPrecautions','precautions']])t[k]=$(id).value;t.reviewed=e.target.id==='trReviewed'?$('trReviewed').checked:false;$('trReviewed').checked=t.reviewed;active().translations[$('lang').value]=t;render();debouncedSave()}
 function getBase(){const u=new URL($('baseUrl').value);if(!/^https?:$/.test(u.protocol)||u.username||u.password)throw Error('HTTPS 사이트 주소를 입력하세요.');u.search='';u.hash='';if(!u.pathname.endsWith('/'))u.pathname+='/';return u}
-function qr(){if(!$('includeQr').checked)return '';try{const u=new URL('viewer.html',getBase());u.searchParams.set('id',active().id);if(qrURL===u.href)return qrImage;const q=qrcode(0,'M');q.addData(u.href);q.make();qrURL=u.href;qrImage=q.createDataURL(5,4);return qrImage}catch(e){return ''}}
+// 번역이 하나라도 등록되면 다국어 QR을 자동으로 넣음(체크하면 번역 없이도 넣음)
+function hasTranslation(d){return Object.values(d.translations||{}).some(t=>['name','signal','hazards','precautions'].some(k=>t?.[k]?.trim()))}
+function wantQr(){return $('includeQr').checked||hasTranslation(active())}
+function qr(){if(!wantQr())return '';try{const u=new URL('viewer.html',getBase());u.searchParams.set('id',active().id);if(qrURL===u.href)return qrImage;const q=qrcode(0,'M');q.addData(u.href);q.make();qrURL=u.href;qrImage=q.createDataURL(5,4);return qrImage}catch(e){return ''}}
 function dimensions(){return {w:Math.min(400,Math.max(20,Number($('width').value)||150)),h:Math.min(400,Math.max(20,Number($('height').value)||210)),f:Math.min(24,Math.max(6,Number($('fontSize').value)||11))}}
 // 실제 표지 종류: 조건을 확인하지 못한 특례는 적용하지 않음(필수 항목 유지).
 function effectiveType(d){const cap=STD.parseCapacity(d.capValue,d.capUnit);if(d.labelType==='small'&&STD.smallEligible(cap))return 'small';if(d.labelType==='semi'&&d.semiConfirmed)return 'semi';return 'standard'}
@@ -79,9 +82,9 @@ function renderNow(){if(renderQueued){cancelAnimationFrame(renderQueued);renderQ
  // 측정(표지 원래 크기 기준)
  const overflow=el.scrollHeight>el.clientHeight+1||el.scrollWidth>el.clientWidth+1,lr=el.getBoundingClientRect(),toMM=px=>px/scale*25.4/96;
  const pictoSides=[...el.querySelectorAll('.symbols img')].map(i=>Math.round(toMM(i.getBoundingClientRect().width)*10)/10);
- let qrOverlap=false;const qi=el.querySelector('.qrblock img');if(qi){const q=qi.getBoundingClientRect(),t=el.querySelector('.sup-text')?.getBoundingClientRect();qrOverlap=q.right>lr.right+1||q.bottom>lr.bottom+1||(t&&t.right>q.left+1&&t.bottom>q.top&&t.top<q.bottom)}
+ let qrOverlap=false;const qi=el.querySelector('.qrblock img');if(qi){const q=qi.getBoundingClientRect(),t=el.querySelector('.name-text')?.getBoundingClientRect();qrOverlap=q.right>lr.right+1||q.bottom>lr.bottom+1||(t&&t.right>q.left+1&&t.bottom>q.top&&t.top<q.bottom)}
  lastEval=STD.evaluate(d,{w:size.w,h:size.h,f:size.f,pictoSides,overflow,qrOverlap},{M,approved:$('approved').checked});
- if($('includeQr').checked&&!qr())lastEval.push({key:'qr',title:'다국어 QR',status:'확인 필요',value:'게시 사이트 주소가 올바르지 않아 QR을 넣지 않았습니다.',basis:'-',kind:'auto'});
+ if(wantQr()&&!qr())lastEval.push({key:'qr',title:'다국어 QR',status:'확인 필요',value:'게시 사이트 주소가 올바르지 않아 QR을 넣지 않았습니다.',basis:'-',kind:'auto'});
  paintChecks();
  $('fitInfo').textContent='실제 크기 '+size.w+'×'+size.h+'mm · '+(size.w*size.h/100)+'㎠ · 본문 '+size.f+'pt · 그림문자 '+(pictoSides[0]||pm)+'mm'+(d.pictoMM?'':' (자동)')+' · 화면 '+Math.round(scale*100)+'%';
  const info=autoInfoHTML(d);if(info!==lastInfo){$('autoInfo').innerHTML=info;lastInfo=info}

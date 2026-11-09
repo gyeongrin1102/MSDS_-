@@ -70,14 +70,14 @@ function noCode(s){return s.replace(/^[HP]\d{3}(?:\+[HP]?\d{3})*\s*[:：]?\s*/,'
 // opt.type: standard | small(제6조②) | semi(제6조③), opt.pictoMM: 그림문자 한 변(mm)
 function labelHTML(d,qr,opt){opt=opt||{};const type=opt.type||'standard',pm=opt.pictoMM,show=s=>esc(d.showCodes===true?s:noCode(s));
  const imgs=(d.pictos||[]).map(n=>`<img src="assets/GHS${String(n).padStart(2,'0')}.svg" alt="${esc(PICTOS[n-1])}"${pm?` style="width:${pm}mm;height:${pm}mm"`:''}>`).join(''),sig=esc(d.signal==='없음'?'':d.signal);
- let h=`<table class="lt"><tbody><tr><td colspan="2" class="lt-name">${esc(d.name||'제품명을 입력하세요')}</td></tr>`;
+ let h=`<table class="lt"><tbody><tr><td colspan="2" class="lt-name"><div class="name-flex"><div class="name-text">${esc(d.name||'제품명을 입력하세요')}</div>${qr?`<div class="qrblock"><img src="${qr}" alt="다국어 QR"><small>다국어 표지<br>Languages</small></div>`:''}</div></td></tr>`;
  if(imgs||sig)h+=`<tr><td colspan="2" class="lt-pic"><div class="pictorow">${imgs?`<div class="symbols">${imgs}</div>`:''}${sig?`<div class="signal">${sig}</div>`:''}</div></td></tr>`;
  if(type==='standard'){const ps=selectedP(d),omitted=pRows(d).length>ps.length;
   h+=`<tr><th>${esc(d.headH||'유해·위험 문구')}</th><td><ul>${lines(d.hazards).map(x=>`<li>${show(x)}</li>`).join('')}</ul></td></tr>`;
   const groups=[2,3,4,5,1,0].map(c=>{const list=ps.filter(r=>r.cat===c);return list.length?`<div class="p-group"><b>${esc(PCATS[c]||'기타')}</b><ul>${list.map(r=>`<li>${show(r.text)}</li>`).join('')}</ul></div>`:''}).join('');
   h+=`<tr><th>${esc(d.headP||'예방조치 문구')}</th><td>${groups}</td></tr>`;
   if(type==='standard'&&omitted)opt.ref=true;}
- if(type!=='semi')h+=`<tr><th>${esc(d.headS||'공급자 정보')}</th><td class="lt-sup"><div class="sup-flex"><div class="sup-text">${esc(d.supplier)}${d.address?'<br>'+esc(d.address):''}${d.phone?'<br>전화 '+esc(d.phone):''}</div>${qr?`<div class="qrblock"><img src="${qr}" alt="다국어 QR"><small>다국어 표지<br>Languages</small></div>`:''}</div></td></tr>`;
+ if(type!=='semi')h+=`<tr><th>${esc(d.headS||'공급자 정보')}</th><td class="lt-sup"><div class="sup-flex"><div class="sup-text">${esc(d.supplier)}${d.address?'<br>'+esc(d.address):''}${d.phone?'<br>전화 '+esc(d.phone):''}</div></div></td></tr>`;
  if(opt.ref)h+='<tr><td colspan="2" class="lt-ref">※ 표시하지 않은 예방조치 문구는 물질안전보건자료(MSDS)를 참고하시오.</td></tr>';
  return h+'</tbody></table>';
 }

@@ -13,7 +13,7 @@
 main{max-width:2000px}
 .workspace{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 /* 완성된 표지는 오른쪽에 고정, 설정·점검은 아래로 스크롤 */
-@media(min-width:1151px){.preview-col{align-self:stretch}.label-card{position:sticky;top:12px;z-index:5;box-shadow:0 6px 24px #142b4818}}
+@media(min-width:1151px){.preview-col{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;border-radius:15px}.label-card{margin-bottom:0;border-bottom:0;border-radius:15px 15px 0 0}.preview-col .preview-card{border-top:0;border-radius:0 0 15px 15px}}
 .label-card .mat{margin-top:8px}.sub-h.first{border-top:0;padding-top:0;margin-top:0}
 .source-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}
 .progress{font-size:12px;color:#7a4b00;background:#fff4dc;border-radius:7px;padding:7px 10px;margin:6px 0}
@@ -98,3 +98,6 @@ footer.legal ul,footer.legal ol{margin:0;padding-left:18px}footer.legal a{color:
 .i18n-view{max-width:900px}.i18n-product{font-size:12.5px;margin:-6px 0 8px}.i18n-product small{color:var(--muted)}
 footer.legal .oss{font-size:11px;margin-top:6px}
 @media(max-width:650px){.rail{display:flex!important;flex-wrap:wrap;align-items:center;gap:4px 10px}.rail .nav{display:inline-block!important;padding:6px 8px;margin:0;font-size:12px}}
+
+/* 표지 상단 다국어 QR */
+.label .name-flex{display:flex;align-items:center;gap:3mm}.label .name-text{flex:1;min-width:0;text-align:center}.label .lt-name .qrblock img{width:17mm;height:17mm}.label .lt-name .qrblock small{font-size:.38em;font-weight:400}
