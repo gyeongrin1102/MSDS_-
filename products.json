@@ -1,1 +1,68 @@
-{"version":1,"products":[]}
+{
+  "version": 1,
+  "updatedAt": "2026-11-09T03:29:08.697Z",
+  "products": [
+    {
+      "id": "p-b25147b9-466f-486a-8b4e-ab71c584b281",
+      "name": "산소 (연습용 예시)",
+      "signal": "위험",
+      "pictos": [
+        3,
+        4
+      ],
+      "noPictos": false,
+      "hazards": "H270 화재를 일으키거나 강렬하게 함: 산화제\nH280 고압가스: 가열하면 폭발할 수 있음",
+      "precautions": "P220 의류 및 가연성 물질로부터 멀리하시오.\nP244 밸브 및 부속품은 오일과 그리스가 묻지 않도록 하시오.\nP370+P376 화재 시: 안전하게 처리하는 것이 가능하면 누출을 막으시오.\nP403 환기가 잘 되는 곳에 보관하시오.\nP410+P403 직사광선을 피하시오. 환기가 잘 되는 곳에 보관하시오.",
+      "supplier": "연습용 공급자",
+      "phone": "000-0000-0000",
+      "address": "실제 MSDS 주소로 바꿔주세요.",
+      "capacity": "",
+      "translations": {},
+      "pMode": "compact",
+      "showCodes": false,
+      "capValue": "40",
+      "capUnit": "L",
+      "labelType": "standard",
+      "semiConfirmed": false,
+      "pictosManual": false
+    },
+    {
+      "id": "p-eacefed0-fa80-4c63-94f6-24ebd426dc43",
+      "name": "동성 Lacquer Spray (적색)",
+      "signal": "위험",
+      "pictos": [
+        2,
+        4,
+        7,
+        8
+      ],
+      "noPictos": false,
+      "hazards": "H220 극인화성 가스\nH225 고인화성 액체 및 증기\nH305 삼켜서 기도로 유입되면 유해할 수 있음\nH312 피부와 접촉하면 유해함\nH315 피부에 자극을 일으킴\nH319 눈에 심한 자극을 일으킴\nH332 흡입하면 유해함\nH351 암을 일으킬 것으로 의심됨\nH361 태아 또는 생식능력에 손상을 일으킬 것으로 의심됨\nH371 신체 중 장기에 손상을 일으킬 수 있음 (11항 참조(MSDS)).",
+      "precautions": "P201 사용 전 취급 설명서를 확보하시오.\nP202 모든 안전 예방조치 문구를 읽고 이해하기 전에는 취급하지 마시오.\nP210 열·스파크·화염·고열로부터 멀리하시오 - 금연\nP233 용기를 단단히 밀폐하시오.\nP240 용기와 수용설비를 접합시키거나 접지하시오.\nP241 폭발 방지용 전기·환기·조명·장비를 사용하시오.\nP242 스파크가 발생하지 않는 도구만을 사용하시오.\nP243 정전기 방지 조치를 취하시오.\nP260 (분진·흄·가스·미스트·증기·스프레이)를(을) 흡입하지 마시오.\nP261 (분진·흄·가스·미스트·증기·스프레이)의 흡입을 피하시오.\nP264 취급 후에는 취급 부위를 철저히 씻으시오.\nP270 이 제품을 사용할 때에는 먹거나, 마시거나 흡연하지 마시오.\nP271 옥외 또는 환기가 잘 되는 곳에서만 취급하시오.\nP273 환경으로 배출하지 마시오.\nP280 (보호장갑·보호의·보안경·안면보호구)를(을) 착용하시오.\nP281 적절한 개인 보호구를 착용하시오.\nP301+P310 삼켰다면 즉시 의료기관(의사)의 진찰을 받으시오.\nP302+P352 피부에 묻으면 다량의 비누와 물로 씻으시오.\nP303+P361+P353 피부(또는 머리카락)에 묻으면 오염된 모든 의복은 벗거나 제거하시오. 피부를 물로 씻으시오/샤워하시오.\nP304+P340 흡입하면 신선한 공기가 있는 곳으로 옮기고 호흡하기 쉬운 자세로 안정을 취하시오.\nP305+P351+P338 눈에 묻으면 몇 분간 물로 조심해서 씻으시오. 가능하면 콘택트렌즈를 제거하시오. 계속 씻으시오.\nP308+P313 노출되거나 노출이 우려되면 의학적인 조치·조언을 구하시오.\nP309+P311 노출되거나 불편함을 느끼면 의료기관(의사)의 진찰을 받으시오.\nP312 불편함을 느끼면 의료기관(의사)의 진찰을 받으시오.\nP321 필요한 처치를 하시오.\nP322 필요한 조치를 하시오.\nP331 토하게 하지 마시오.\nP332+P313 피부 자극이 생기면 의학적인 조치·조언을 구하시오.\nP337+P313 눈에 자극이 지속되면 의학적인 조치·조언을 구하시오.\nP362 오염된 의복은 벗고 다시 사용 전 세탁하시오.\nP363 다시 사용전 오염된 의복은 세척하시오.\nP370+P378 화재 시 불을 끄기 위해 적절한 소화제를 사용하시오 (5항 참조).\nP403+P235 환기가 잘 되는 곳에 보관하고 저온으로 유지하시오.\nP405 잠금장치가 있는 저장장소에 저장하시오.\nP501 MSDS의\"13.폐기 시 주의사항\"을 참고하여 내용물과 용기를 폐기하시오.",
+      "supplier": "주식회사 일신 케미칼",
+      "phone": "043)536-0161",
+      "address": "충청북도 진천군 덕산읍 신척산단 1로 2 (신척리 851)",
+      "capacity": "",
+      "translations": {
+        "vi": {
+          "reviewed": true,
+          "name": "동성 Lacquer Spray (적색)",
+          "signal": "nguy hiêm",
+          "hazards": "- khí dễ cháy\n- Chất lỏng và hơi nước nóng\n- Nó có thể gây hại nếu nuốt vào và chảy vào cầu nguyện.\n- Có hại khi tiếp xúc với da\n- Gây kích ứng da\n- Gây kích ứng mạnh cho mắt\n- hít vào có hại\n- Nghi ngờ có thế gây ung thư\n- Nghi ngờ có thể gây tổn hại đến khả n ăng sinh sản hoặc thai nhi\n- Có thể gây tốn thương đến các cơ quan trong c ơ thể (xem khoản 11 MSDS).",
+          "precautions": "sự đề phòng - Tránh xa nhiệt độ, tia lửa, nhi ệt độ cao - Cấm hút thuốc\n                 - Hãy đeo găng tay bảo hộ, quần á o bảo hộ, kính bảo hộ, đồ bảo hộ khuôn mặt.\nsự đỗ i phó - Nếu nuốt phải, hãy đên cơ quan y tế (bác sĩ) khám ngay.\n                - Nếu bị phơi bày hoặc lo ngại phơi bày, hãy tìm kiềm các biện pháp và lời khuyên y học.\ntích trữ       - Hãy bảo quản ở nơi thoá ng khí tốt và duy trì ở nhiệt độ thâp.\nsự hu ỷ bỏ - Tham khảoồ 13. Nội dung chú ý khi h ủy bỏ\" của MSDS và hủy bỏ nội dung và hộp đựng."
+        }
+      },
+      "pMode": "compact",
+      "showCodes": false,
+      "capUnit": "mL",
+      "labelType": "standard",
+      "semiConfirmed": false,
+      "pictosManual": false,
+      "size": {
+        "w": 150,
+        "h": 280,
+        "f": 11
+      }
+    }
+  ]
+}
